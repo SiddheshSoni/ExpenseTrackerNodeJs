@@ -1,0 +1,15 @@
+.Signup-container{
+    
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.Signup-card{
+    padding: 10px;
+    margin: 10px;
+    border: 1px solid black;
+    width: 250px;
+    height: 350px;
+    border-radius: 10px;
+}
+
