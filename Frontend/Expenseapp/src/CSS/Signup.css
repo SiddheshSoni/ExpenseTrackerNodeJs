@@ -1,15 +1,37 @@
 .Signup-container{
-    
+    min-height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
+    background: #f7f7f7;
+    padding: 20px;
 }
+
 .Signup-card{
-    padding: 10px;
+    padding: 20px;
     margin: 10px;
-    border: 1px solid black;
-    width: 250px;
-    height: 350px;
+    border: 1px solid #ddd;
+    width: 320px;
     border-radius: 10px;
+    background: white;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.Signup-title{
+    text-align: center;
+    margin-bottom: 1rem;
+    font-size: 1.4rem;
+}
+
+.form-success {
+    margin-top: 0.75rem;
+    color: green;
+    text-align: center;
+}
+
+.form-error {
+    margin-top: 0.75rem;
+    color: red;
+    text-align: center;
 }
 
