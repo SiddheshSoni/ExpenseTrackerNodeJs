@@ -1,11 +1,13 @@
 import React from 'react'
-import Signup from './Pages/Signup'
 import "./App.css";
+import Signup from './Pages/Signup'
+import Login from './Pages/Login';
 const App = () => {
   return (
     <>
       
-      <Signup />
+      {/* <Signup /> */}
+      <Login />
     </>
   )
 }
