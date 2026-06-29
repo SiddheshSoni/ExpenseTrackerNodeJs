@@ -2,8 +2,10 @@ import React, { useRef, useState } from 'react';
 import "../CSS/Signup.css";
 
 import { Button, Form, FormControl, FormGroup, FormLabel } from 'react-bootstrap';
+import { useNavigate } from 'react-router';
 
 const Login = () => {
+  const navigate = useNavigate();
   const emailRef = useRef(null);
   const passRef = useRef(null);
   const [message, setMessage] = useState('');
@@ -67,6 +69,9 @@ const Login = () => {
           </FormGroup>
           {message && <p className='form-success'>{message}</p>}
           {error && <p className='form-error'>{error}</p>}
+
+          <p onClick={()=> navigate("/Signup")} className=' w-100 text-center mt-4 mb-0 bg-body-tertiary'> Create an Account? <span className='text-primary' >Sign Up</span> </p>
+
         </Form>
       </div>
     </div>
