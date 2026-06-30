@@ -1,9 +1,10 @@
 const Users = require("../models/Users");
+const bcrypt = require("bcrypt");
 
 const loginUser = async(req, res) =>{
     try {
         const {email, password} = req.body;
-        
+
         const user = await Users.findOne({
             where:{
                 email:email
@@ -13,11 +14,12 @@ const loginUser = async(req, res) =>{
         if(!user){
             return res.status(401).send("User with Email not found! try again!");
         }
-        if (user.password !== password) {
-            return res.status(401).send("Incorrect Password!");
-        }
 
-        if(user.password === password){
+        const isMatch = await bcrypt.compare(password, user.password);
+
+        if (!isMatch) {
+            return res.status(401).send("Incorrect Password!");
+        }else{
             res.status(200).send("User Credentials matched! Logged in successfully!");
         }
     } catch (error) {
