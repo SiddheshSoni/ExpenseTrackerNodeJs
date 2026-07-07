@@ -1,6 +1,12 @@
-const Users = require("../models/Users");
+const {Users} = require("../models/index");
 const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
+require("dotenv").config();
 
+
+const generateJWTToken = (id, name) =>{
+     return jwt.sign({userId: id, name: name}, process.env.SECRET_KEY);
+}
 
 const addUser = async(req , res)=>{
     try {
@@ -16,10 +22,14 @@ const addUser = async(req , res)=>{
             password: hashedPassword,
         });
 
-        res.status(201).send("Added New User Successfully!");
-        
+        const token = generateJWTToken(user.id, user.username);
+        return res.status(201).json({
+            message: "User Created successfully!",
+            token: token
+        }); 
+
     } catch (error) {
-        res.status(500).send("Failed to add New User!" + error);        
+        res.status(500).send("Failed to add New User!" + error.message);        
     }
 };
 

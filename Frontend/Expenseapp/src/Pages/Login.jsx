@@ -37,10 +37,12 @@ const Login = () => {
         }),
       });
 
-      const data = await response.text();
+      const data = await response.json();
 
       if (response.ok) {
-        setMessage(data || 'Logged In successfully!');
+        setMessage(data.message || 'Logged In successfully!');
+        localStorage.setItem("token", data.token);
+        navigate('/home');
         e.target.reset();
       } else {
         setError(data || 'Failed to Login Try Again!');

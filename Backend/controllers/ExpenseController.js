@@ -1,13 +1,14 @@
-const Expense = require('../models/Expenses');
+const {Expenses} = require('../models/index');
 
 const addExpense = async (req, res) =>{
     try {
         const { amount, description, category } = req.body;
-
-        const expense = await Expense.create({
+                console.log("req user id POST REQ", req.user.id);
+        const expense = await Expenses.create({
             amount, 
             description,
-            category
+            category,
+            UserId:req.user.id
         });
 
         // res.status(201).send("Added expense Successfully!");
@@ -20,7 +21,12 @@ const addExpense = async (req, res) =>{
 
 const getExpense = async(req, res) =>{
     try {
-        const allExpense = await Expense.findAll();
+        console.log("req user id", req.user.id);
+        const allExpense = await Expenses.findAll({
+            where: {
+                userId:req.user.id
+            }
+        });
         
         return res.status(200).json(allExpense);
     } catch (error) {
@@ -34,7 +40,7 @@ const getExpense = async(req, res) =>{
 const deleteExpense = async(req, res) => {
     try {
         const {id} = req.params;
-        const deleted = await Expense.destroy({
+        const deleted = await Expenses.destroy({
             where:{
                 id
             }

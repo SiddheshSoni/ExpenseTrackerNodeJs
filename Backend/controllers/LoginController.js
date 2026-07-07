@@ -1,6 +1,12 @@
-const Users = require("../models/Users");
+const {Users} = require("../models/index");
 const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
+require("dotenv").config();
 
+
+const generateJWTToken = (id, name) =>{
+     return jwt.sign({userId: id, name: name}, process.env.SECRET_KEY);
+}
 const loginUser = async(req, res) =>{
     try {
         const {email, password} = req.body;
@@ -19,8 +25,13 @@ const loginUser = async(req, res) =>{
 
         if (!isMatch) {
             return res.status(401).send("Incorrect Password!");
-        }else{
-            res.status(200).send("User Credentials matched! Logged in successfully!");
+        } else {
+            console.log(user);
+            const token = generateJWTToken(user.id, user.username);
+            return res.status(200).json({
+                message: "User Credentials matched! Logged in successfully!",
+                token: token
+            });
         }
     } catch (error) {
         res.status(500).send("Error: " + error.message);

@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react'
 import {Button, Form, FormControl, FormGroup, FormLabel, FormSelect } from "react-bootstrap";
+import Checkout from './cashfree';
 
 const HomePage = () => {
     const catergories = ["Food", "Entertainment", "Travel", "Shopping", "Bills"];
@@ -15,11 +16,14 @@ const HomePage = () => {
             const description = descRef.current.value;
             const category = catRef.current.value;
             // console.log(amount, description, category);
+            
+            const token = localStorage.getItem("token");
 
             const res = await fetch("http://localhost:3000/Expense", {
                 method:"POST",
                 headers:{
                     'Content-Type':"application/json",
+                    'Authorization':token
                 },
                 body:JSON.stringify({
                     amount, 
@@ -46,10 +50,13 @@ const HomePage = () => {
     useEffect(()=>{
         const getExpenses = async()=>{
             try{
+                const token = localStorage.getItem("token");
+
                 const res = await fetch("http://localhost:3000/Expense", {
                     method:"GET",
                     headers:{
                         'Content-Type':"application/json",
+                        'Authorization':token
                     }
                 });
                 
@@ -85,6 +92,13 @@ const HomePage = () => {
 
   return (
     <>
+        <div>
+            <Checkout />
+            {/* <Button variant="primary" id='renderBtn'>
+                buy premium membership
+            </Button> */}
+        </div>
+        <div id='cf_checkout'></div>
         <div className='form-container'>
             <Form onSubmit={submitHandler}>
                 <FormGroup>
