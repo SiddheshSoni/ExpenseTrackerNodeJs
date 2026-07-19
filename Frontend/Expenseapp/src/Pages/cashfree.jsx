@@ -22,9 +22,14 @@ function Checkout() {
         alert("Cashfree SDK is still loading...");
         return;
       }
+      const token = localStorage.getItem("token");
 
       const response = await fetch("http://localhost:3000/pay", {
         method: "POST",
+        headers:{
+          'Content-Type':"application/json",
+          'Authorization':token
+        },
       });
 
       if (!response.ok) {

@@ -1,0 +1,23 @@
+.lb-title{
+    margin-top: 50px;
+    width: 100%;
+    height: 50px;
+    background-color: skyblue;
+    font-size: 2rem;
+    font-weight: 600;
+    text-align: center;
+}
+
+.lb-content{
+    
+    font-size: 1.1rem;
+
+}
+.lb-content span{
+    margin:5px; 
+}
+.lb-item{
+    display: flex;
+    justify-content:space-around;
+    align-items: center;
+}

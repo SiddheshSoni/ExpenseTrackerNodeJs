@@ -50,7 +50,7 @@ const fetchOrder = async (orderId) => {
         const response = await cashfree.PGFetchOrder(orderId);
         const paymentStatus = response.data.order_status;
         
-        return paymentStatus;
+        return response.data;
     } catch (err) {
         console.error(err);
         throw err;

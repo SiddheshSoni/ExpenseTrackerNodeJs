@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react'
 import {Button, Form, FormControl, FormGroup, FormLabel, FormSelect } from "react-bootstrap";
 import Checkout from './cashfree';
+import Leaderboard from './LeaderBoard';
 
 const HomePage = () => {
     const catergories = ["Food", "Entertainment", "Travel", "Shopping", "Bills"];
@@ -46,8 +47,32 @@ const HomePage = () => {
             alert("Failed to Add the expense!");
         }
     };
-
     useEffect(()=>{
+        const isPremium = async()=>{
+            try {
+                const token = localStorage.getItem("token");
+                const res = await fetch("http://localhost:3000/premium",{
+                    method:"GET",
+                    headers:{
+                        'Content-Type':"application/json",
+                        'Authorization':token,
+                    }
+                });
+
+                const data = await res.json();
+                console.log(data);
+                if(data.user.Premium){
+                    alert("You are a Premium User!")
+                }
+
+            } catch (error) {
+                console.log(error.message);
+            }
+        }
+        isPremium();
+    },[]);
+    useEffect(()=>{
+        
         const getExpenses = async()=>{
             try{
                 const token = localStorage.getItem("token");
@@ -130,6 +155,8 @@ const HomePage = () => {
                 ))
             }
         </div>
+
+        <Leaderboard />
     </>
   )
 }
