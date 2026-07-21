@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import "../CSS/Leaderboard.css";
 import { Table } from 'react-bootstrap';
 
-const Leaderboard = () => {
+const Leaderboard = ({refresh}) => {
   const [leaderboard, setLeaderboard] = useState([]);
 
   useEffect(()=>{
@@ -24,7 +24,7 @@ const Leaderboard = () => {
       }
     };
     getLeaderBoard();
-  }, []);
+  }, [refresh]);
 
   return (
     <>

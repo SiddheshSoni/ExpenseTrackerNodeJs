@@ -20,17 +20,9 @@ const getLeaderboard = async (req, res) =>{
             attributes: [
                 "id",
                 "username",
-                [
-                    fn("COALESCE", fn("SUM", col("Expenses.amount")), 0),
-                    "totalExpense"
-                ]
+                "totalExpense"
             ],
-            include: [{
-                model: Expense,
-                attributes: []
-            }],
-            group: ["Users.id"],
-            order: [[fn("SUM", col("Expenses.amount")), "DESC"]]
+            order:[[col("totalExpense"), "DESC"]]
         });
 
         res.status(200).json(leaderboard);

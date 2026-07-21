@@ -4,6 +4,8 @@ import Checkout from './cashfree';
 import Leaderboard from './LeaderBoard';
 
 const HomePage = () => {
+    const [leaderboardRefresh, setLeaderboardRefresh] = useState(0);
+
     const catergories = ["Food", "Entertainment", "Travel", "Shopping", "Bills"];
     const [expense, setExpense] = useState([]);
     const amountRef = useRef();
@@ -39,6 +41,7 @@ const HomePage = () => {
 
             const newExpense = await res.json();
             setExpense(prev => [...prev, newExpense]);
+            setLeaderboardRefresh(prev => prev + 1);
             alert("Added the expense successfully!");
 
             e.target.reset();
@@ -100,9 +103,13 @@ const HomePage = () => {
 
     const deleteExp = async (id) =>{
         try {
+            const token = localStorage.getItem("token");
             const res = await fetch(`http://localhost:3000/expense/${id}`,{
                 method:"DELETE",
-                
+                headers:{
+                        'Content-Type':"application/json",
+                        'Authorization':token
+                    }
             });
 
             if(!res.ok){
@@ -110,6 +117,7 @@ const HomePage = () => {
             }
             setExpense((prev) =>( prev.filter((exp)=> exp.id !== id)));
             alert("Deleted expense!");
+            setLeaderboardRefresh(prev => prev + 1);
         } catch (error) {
             console.log(error.message);
         }
@@ -156,7 +164,7 @@ const HomePage = () => {
             }
         </div>
 
-        <Leaderboard />
+        <Leaderboard refresh={leaderboardRefresh} />
     </>
   )
 }

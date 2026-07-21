@@ -13,11 +13,3 @@
     font-size: 1.1rem;
 
 }
-.lb-content span{
-    margin:5px; 
-}
-.lb-item{
-    display: flex;
-    justify-content:space-around;
-    align-items: center;
-}

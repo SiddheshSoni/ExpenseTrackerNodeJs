@@ -1,4 +1,4 @@
-const {Expenses} = require('../models/index');
+const {Expenses, Users} = require('../models/index');
 
 const addExpense = async (req, res) =>{
     try {
@@ -11,6 +11,18 @@ const addExpense = async (req, res) =>{
             UserId:req.user.id
         });
 
+        const user = await Users.findByPk(req.user.id);
+
+        await Users.update(
+            {
+                totalExpense:Number(user.totalExpense)+Number(amount),
+            },
+            {
+                where:{
+                    id:req.user.id,
+                }
+            }
+        );
         // res.status(201).send("Added expense Successfully!");
         res.status(201).json(expense);
 
@@ -40,6 +52,9 @@ const getExpense = async(req, res) =>{
 const deleteExpense = async(req, res) => {
     try {
         const {id} = req.params;
+        const expense = await Expenses.findByPk(id);
+        
+
         const deleted = await Expenses.destroy({
             where:{
                 id
@@ -52,6 +67,18 @@ const deleteExpense = async(req, res) => {
             });
         }
 
+        const user = await Users.findByPk(req.user.id);
+
+        await Users.update(
+            {
+                totalExpense:Number(user.totalExpense)-Number(expense.amount),
+            },
+            {
+                where:{
+                    id:req.user.id,
+                }
+            }
+        );
         return res.status(200).json({
             message:"deleted expense successfully!"
         });
