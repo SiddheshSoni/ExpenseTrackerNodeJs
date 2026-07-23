@@ -16,6 +16,16 @@ const addUser = async(req , res)=>{
         const hashedPassword = await bcrypt.hash(password, saltRounds);
         console.log(hashedPassword);
 
+        const emailExists = await Users.findAll({
+            where:{
+                email,
+            }
+        });
+
+        if(emailExists){
+            throw new Error("Email Already Exists!");
+        }
+
         const user = await Users.create({
             username,
             email, 
@@ -29,7 +39,7 @@ const addUser = async(req , res)=>{
         }); 
 
     } catch (error) {
-        res.status(500).send("Failed to add New User!" + error.message);        
+        res.status(500).send("Failed to add New User! " + error.message);        
     }
 };
 

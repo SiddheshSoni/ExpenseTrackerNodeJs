@@ -76,7 +76,7 @@ const getPaymentStatus = async (req, res) => {
       paymentDetails: order,
     });
   } catch (err) {
-    console.error(err);
+    // console.error(err);
 
     res.status(500).json({
       success: false,

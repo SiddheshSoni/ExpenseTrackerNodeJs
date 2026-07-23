@@ -34,13 +34,13 @@ const createOrder = async (
 
             order_expiry_time: expiry.toISOString(),
         };
-        console.log("Request"+ request);
+        // console.log("Request"+ request);
 
         const response = await cashfree.PGCreateOrder(request);
-        console.log("Cashfree Response:", response.data);
+        // console.log("Cashfree Response:", response.data);
         return response.data.payment_session_id;
     } catch (err) {
-        console.error(err);
+        // console.error(err);
         throw err;
     }
 };
@@ -52,7 +52,7 @@ const fetchOrder = async (orderId) => {
         
         return response.data;
     } catch (err) {
-        console.error(err);
+        // console.error(err);
         throw err;
     }
 };

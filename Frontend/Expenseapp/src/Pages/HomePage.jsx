@@ -145,6 +145,7 @@ const HomePage = () => {
                 <FormGroup>
                     <FormLabel htmlFor='category' >Category:</FormLabel>
                     <FormSelect name='category' ref={catRef}>
+                        <option value="">Auto Detect</option>
                         {
                             catergories.map((cat)=>(
                                 <option key={cat} value={cat.toLowerCase()}>{cat}</option>

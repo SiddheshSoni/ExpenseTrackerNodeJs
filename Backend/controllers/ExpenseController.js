@@ -1,9 +1,18 @@
 const {Expenses, Users} = require('../models/index');
+const { suggestCategory } = require('../services/genAI');
 
 const addExpense = async (req, res) =>{
     try {
-        const { amount, description, category } = req.body;
-                console.log("req user id POST REQ", req.user.id);
+        let { amount, description, category } = req.body;
+        
+        // console.log("req user id POST REQ", req.user.id);
+
+        if(!category || category === ""){
+            const suggestedCategory = await suggestCategory(description);
+            // console.log("suggested" + suggestedCategory);
+            category = suggestedCategory;
+        }
+
         const expense = await Expenses.create({
             amount, 
             description,
@@ -33,7 +42,7 @@ const addExpense = async (req, res) =>{
 
 const getExpense = async(req, res) =>{
     try {
-        console.log("req user id", req.user.id);
+        // console.log("req user id", req.user.id);
         const allExpense = await Expenses.findAll({
             where: {
                 userId:req.user.id

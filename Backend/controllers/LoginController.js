@@ -26,7 +26,7 @@ const loginUser = async(req, res) =>{
         if (!isMatch) {
             return res.status(401).send("Incorrect Password!");
         } else {
-            console.log(user);
+            // console.log(user);
             const token = generateJWTToken(user.id, user.username);
             return res.status(200).json({
                 message: "User Credentials matched! Logged in successfully!",

@@ -4,7 +4,8 @@ require('dotenv').config();
 
 const sequelize = new Sequelize('expenseappdb', 'root', process.env.DB_PASSWORD, {
   host: 'localhost',
-  dialect:'mysql'
+  dialect:'mysql',
+  logging: false,
 });
 
 (async ()=>{
