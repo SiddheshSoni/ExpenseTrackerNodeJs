@@ -1,8 +1,13 @@
 const {Expenses, Users} = require('../models/index');
 const { suggestCategory } = require('../services/genAI');
+const sequelize = require('../utils/db-connnection');
 
 const addExpense = async (req, res) =>{
+    
+    const transaction = await sequelize.transaction();
+
     try {
+
         let { amount, description, category } = req.body;
         
         // console.log("req user id POST REQ", req.user.id);
@@ -18,7 +23,7 @@ const addExpense = async (req, res) =>{
             description,
             category,
             UserId:req.user.id
-        });
+        }, {transaction: transaction});
 
         const user = await Users.findByPk(req.user.id);
 
@@ -29,13 +34,16 @@ const addExpense = async (req, res) =>{
             {
                 where:{
                     id:req.user.id,
-                }
+                },
+                transaction,
             }
         );
         // res.status(201).send("Added expense Successfully!");
+        await transaction.commit();
         res.status(201).json(expense);
 
     } catch (error) {
+        await transaction.rollback();
         res.status(500).send("Failed adding expense! Error:" + error.message);
     }
 };
@@ -59,6 +67,9 @@ const getExpense = async(req, res) =>{
 };
 
 const deleteExpense = async(req, res) => {
+    
+    const transaction = await sequelize.transaction();
+
     try {
         const {id} = req.params;
         const expense = await Expenses.findByPk(id);
@@ -66,8 +77,10 @@ const deleteExpense = async(req, res) => {
 
         const deleted = await Expenses.destroy({
             where:{
-                id
-            }
+                id,
+                UserId:req.user.id,
+            },
+            transaction
         });
 
         if (deleted === 0) {
@@ -85,13 +98,16 @@ const deleteExpense = async(req, res) => {
             {
                 where:{
                     id:req.user.id,
-                }
+                },
+                transaction,
             }
         );
+        await transaction.commit();
         return res.status(200).json({
             message:"deleted expense successfully!"
         });
     } catch (error) {
+        await transaction.rollback();
         return res.status(500).json({
             message:"Failed getting expenses! Error:",
             error:error.message,
