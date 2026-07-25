@@ -9,7 +9,8 @@ const generateJWTToken = (id, name) =>{
 }
 const loginUser = async(req, res) =>{
     try {
-        const {email, password} = req.body;
+        const userCred = req.body;
+        const {email, password} = userCred;
 
         const user = await Users.findOne({
             where:{

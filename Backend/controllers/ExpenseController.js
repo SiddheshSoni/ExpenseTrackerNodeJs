@@ -72,9 +72,20 @@ const deleteExpense = async(req, res) => {
 
     try {
         const {id} = req.params;
-        const expense = await Expenses.findByPk(id);
+        const expense = await Expenses.findOne({
+            where:{
+                id,
+                UserId:req.user.id,
+            },
+            transaction,
+        })
         
-
+        if (!expense) {
+            await transaction.rollback();
+            return res.status(404).json({
+                message: "Expense not found"
+            });
+        }
         const deleted = await Expenses.destroy({
             where:{
                 id,

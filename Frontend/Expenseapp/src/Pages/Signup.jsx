@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { Button, Form, FormControl, FormGroup, FormLabel } from 'react-bootstrap';
 import { useNavigate } from 'react-router';
 import { login } from '../Store/authSlice';
+import Authenticate from '../API/Authentication';
 
 const Signup = () => {
   const dispatch = useDispatch();
@@ -20,7 +21,6 @@ const Signup = () => {
 
   const submitHandler = async (e) => {
     e.preventDefault();
-
     
     const username = isSignUp ? userRef.current?.value.trim(): "Guest";
     const email = emailRef.current?.value.trim();
@@ -43,29 +43,17 @@ const Signup = () => {
       userCred.username = username;
     }
 
-    try {
-      const response = await fetch(`http://localhost:3000/${isSignUp?"SignUp":"Login"}`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(userCred),
-      });
+    const result = await Authenticate(userCred, isSignUp);
 
-      const data = await response.json();
-
-      if (response.ok) {
-        setMessage(data.message || 'success!');
-        localStorage.setItem("token", data.token);
-        dispatch(login());
-        navigate('/home');
-        e.target.reset();
-      } else {
-        setError(data.message || 'Error!.');
-      }
-    } catch (err) {
-      console.error(err);
-      setError(err);
+    if (result.ok){
+      setMessage(result.data.message || "Success!");
+      localStorage.setItem("token", result.data.token);
+      dispatch(login());
+      navigate("/home");
+      e.target.reset();
+    }else{
+      console.log(result.error)
+      setError(result.error);
     }
   };
 
@@ -93,8 +81,13 @@ const Signup = () => {
           </FormGroup>
           {message && <p className='form-success'>{message}</p>}
           {error && <p className='form-error'>{error}</p>}
-
-          <p onClick={()=> setIsSignUp(prev => !prev)} className='w-100 text-center mt-4 mb-0 bg-body-tertiary'>
+          {!isSignUp && <p
+            onClick={()=> navigate('/forgotPassword')} 
+            className='w-100 text-center mt-1 mb-0 text-decoration-underline' >
+              Forgot Password?
+            </p>
+          }
+          <p onClick={()=> setIsSignUp(prev => !prev)} className='w-100 text-center mt-3 mb-0 bg-body-tertiary'>
             {isSignUp ? "Already Have an Account?" : "Create an Account"}
             <span className='text-primary' >{isSignUp? "Login" : "Sign Up"}</span>
           </p>

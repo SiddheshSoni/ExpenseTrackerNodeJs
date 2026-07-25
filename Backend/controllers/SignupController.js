@@ -1,6 +1,7 @@
 const {Users} = require("../models/index");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const { log } = require("node:console");
 require("dotenv").config();
 
 
@@ -10,7 +11,10 @@ const generateJWTToken = (id, name) =>{
 
 const addUser = async(req , res)=>{
     try {
-        const {username, email, password} = req.body;
+        const userCred = req.body;
+        console.log(userCred);
+
+        const {username, email, password} = userCred;
 
         const saltRounds = 10;
         const hashedPassword = await bcrypt.hash(password, saltRounds);
@@ -22,7 +26,7 @@ const addUser = async(req , res)=>{
             }
         });
 
-        if(emailExists){
+        if(emailExists.length !== 0){
             throw new Error("Email Already Exists!");
         }
 
