@@ -28,7 +28,7 @@ const ForgotPassword = () => {
     }
 
     try {
-        const result = await fetch("http://localhost:3000/forgotpassword", {
+        const result = await fetch("http://localhost:3000/password/forgotPassword", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -43,7 +43,8 @@ const ForgotPassword = () => {
             e.target.reset();
             // navigate("/");
         } else {
-            setError(data.message || "Something went wrong.");
+            console.log(data);
+            setError(data.error || "Something went wrong.");
         }
     } catch (err) {
         setError(err.message || "Unable to connect to the server.");
