@@ -1,47 +1,50 @@
 import React, { useRef, useState } from 'react';
 import "../CSS/Signup.css";
 import { Button, Form, FormControl, FormGroup, FormLabel } from 'react-bootstrap';
-import { useNavigate } from 'react-router';
+import { useNavigate, useParams } from 'react-router';
 
 
-const ForgotPassword = () => {
-  
-  const [] = useState(true);
+const ResetPassword = () => {
 
   const navigate = useNavigate();
-  
-  const emailRef = useRef(null);
+  const { uuid } = useParams();
+  const passwordRef = useRef(null);
 
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
 
   const submitHandler = async (e) => {
     e.preventDefault();
-    const email = emailRef.current?.value.trim();
+    const newPassword = passwordRef.current?.value;
 
     setMessage('');
     setError('');
 
-    if (!email) {
-      setError('Please fill in all fields.');
+    if (!newPassword) {
+      setError('Please fill password.');
       return;
     }
 
     try {
-        const result = await fetch("http://localhost:3000/password/forgotpassword", {
+        const result = await fetch(`http://localhost:3000/password/updatepassword/${uuid}`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
             },
-            body: JSON.stringify({ email }),
+            body: JSON.stringify({ 
+                newPassword,
+            }),
         });
 
         const data = await result.json();
 
         if (result.ok) {
             setMessage(data.message || "Success!");
-            e.target.reset();
-            // navigate("/");
+            passwordRef.current.value = "";
+            
+            setTimeout(() => {
+                navigate("/Signup");
+            }, 1500);
         } else {
             console.log(data);
             setError(data.error || "Something went wrong.");
@@ -54,14 +57,14 @@ const ForgotPassword = () => {
   return (
     <div className='Signup-container'>
       <div className='Signup-card'>
-        <h2 className='Signup-title'>Please enter your email!</h2>
+        <h2 className='Signup-title'>Please enter new password!</h2>
         <Form onSubmit={submitHandler}>
           <FormGroup className='mb-2'>
-            <FormLabel htmlFor='email'>Email:</FormLabel>
-            <FormControl type='email' name='email' ref={emailRef} />
+            <FormLabel htmlFor='password'>New Password:</FormLabel>
+            <FormControl type='password' name='password' ref={passwordRef} />
           </FormGroup>
           <FormGroup className='mb-2 mt-4'>
-            <Button className='w-100' type='submit'>Receive Email</Button>
+            <Button className='w-100' type='submit'>Reset Password</Button>
           </FormGroup>
           {message && <p className='form-success'>{message}</p>}
           {error && <p className='form-error'>{error}</p>}
@@ -72,4 +75,4 @@ const ForgotPassword = () => {
   );
 };
 
-export default ForgotPassword;
+export default ResetPassword;

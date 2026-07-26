@@ -82,7 +82,7 @@ const Signup = () => {
           {message && <p className='form-success'>{message}</p>}
           {error && <p className='form-error'>{error}</p>}
           {!isSignUp && <p
-            onClick={()=> navigate('/forgotPassword')} 
+            onClick={()=> navigate('/password/forgotpassword')} 
             className='w-100 text-center mt-1 mb-0 text-decoration-underline' >
               Forgot Password?
             </p>
