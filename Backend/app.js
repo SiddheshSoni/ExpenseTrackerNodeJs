@@ -7,6 +7,7 @@ const ExpenseRoute = require('./routes/ExpenseRoute');
 const PaymentRoute = require("./routes/PaymentRoutes");
 const PremiumRoute = require("./routes/PremiumRoute");
 const PasswordRoute = require("./routes/PasswordRoute");
+const ReportRoute = require("./routes/ReportRoute");
 var cors = require("cors");
 
 app.use(express.json());
@@ -19,6 +20,7 @@ app.use("/Expense", ExpenseRoute);
 app.use("/pay", PaymentRoute);
 app.use("/premium", PremiumRoute);
 app.use("/password", PasswordRoute);
+app.use("/report", ReportRoute);
 
 db.sync({alter: true}).then(()=>{
     app.listen(3000, ()=> console.log('Server Started!'));

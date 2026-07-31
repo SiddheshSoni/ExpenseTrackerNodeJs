@@ -42,9 +42,9 @@ const HomePage = () => {
             const newExpense = await res.json();
             setExpense(prev => [...prev, newExpense]);
             setLeaderboardRefresh(prev => prev + 1);
-            alert("Added the expense successfully!");
+            // alert("Added the expense successfully!");
 
-            e.target.reset();
+            // e.target.reset();
         }catch(error){
             console.log(error.message);
             alert("Failed to Add the expense!");

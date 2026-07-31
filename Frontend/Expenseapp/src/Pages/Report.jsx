@@ -1,10 +1,13 @@
 import React, { useEffect, useState } from 'react'
 import { Button, Table } from 'react-bootstrap';
+import "../CSS/report.css";
 
 const Report = () => {
     const [expense, setExpense] = useState([]);
     const [view, setView] = useState("daily");
-    
+    const [page, setPage] = useState(1);
+    const [pagination, setPagination] = useState({});
+
     const downloadReport = () => {
 
         const headers = [
@@ -42,35 +45,40 @@ const Report = () => {
         a.click();
 
         window.URL.revokeObjectURL(url);
-    }
+    };
+
     useEffect(()=>{
-        const getExpenses = async()=>{
-            try{
-                const token = localStorage.getItem("token");
+        getPaginatedExpenses(page);
+    }, [page]);
+    
+    const getPaginatedExpenses = async(page)=>{
+        
+        try{
+            const token = localStorage.getItem("token");
 
-                const res = await fetch("http://localhost:3000/Expense", {
-                    method:"GET",
-                    headers:{
-                        'Content-Type':"application/json",
-                        'Authorization':token
-                    }
-                });
-                
-                if(!res.ok){
-                    throw new Error("Failed fetching data!");
+            const res = await fetch(`http://localhost:3000/report/${page}`, {
+                method:"GET",
+                headers:{
+                    'Content-Type':"application/json",
+                    'Authorization':token
                 }
-
-                const data = await res.json();   
-                setExpense(data);
-            }catch(error){
-                console.log(error.message);
+            });
+            
+            if(!res.ok){
+                throw new Error("Failed fetching data!");
             }
+
+            const data = await res.json();   
+            setExpense(data.paginatedExpenses);
+
+            setPagination(data);
+
+        }catch(error){
+            console.log(error.message);
         }
-        getExpenses();
-    },[]);
+    };
 
-
-    const filteredExpenses = expense.filter(item => {
+    const filteredExpenses = expense?.filter(item => {
         const expenseDate = new Date(item.createdAt);
         const today = new Date();
 
@@ -88,7 +96,7 @@ const Report = () => {
         return true;
     });
 
-    const totalExpense = filteredExpenses.reduce(
+    const totalExpense = filteredExpenses?.reduce(
         (sum, item) => sum + Number(item.amount),
         0
     );
@@ -98,27 +106,37 @@ const Report = () => {
         <div className='d-flex justify-content-center align-content-center'>
             <h1>Day to Day Expense</h1>
         </div>
-        <div className="d-flex gap-2 mb-3">
-            <Button
-                variant={view === "daily" ? "primary" : "outline-primary"}
-                onClick={() => setView("daily")}
-            >
-                Daily
-            </Button>
+        <div className='d-flex justify-content-between m-2'>            
+            <div className="d-flex gap-2 mb-3">
+                <Button
+                    variant={view === "daily" ? "primary" : "outline-primary"}
+                    onClick={() => setView("daily")}
+                >
+                    Daily
+                </Button>
 
-            <Button
-                variant={view === "weekly" ? "primary" : "outline-primary"}
-                onClick={() => setView("weekly")}
-            >
-                Weekly
-            </Button>
+                <Button
+                    variant={view === "weekly" ? "primary" : "outline-primary"}
+                    onClick={() => setView("weekly")}
+                >
+                    Weekly
+                </Button>
 
-            <Button
-                variant={view === "monthly" ? "primary" : "outline-primary"}
-                onClick={() => setView("monthly")}
-            >
-                Monthly
-            </Button>
+                <Button
+                    variant={view === "monthly" ? "primary" : "outline-primary"}
+                    onClick={() => setView("monthly")}
+                >
+                    Monthly
+                </Button>
+            </div>
+            <div>
+                <Button 
+                    id='download-btn'
+                    onClick={downloadReport}
+                >
+                    Download Report
+                </Button>
+            </div>
         </div>
             <Table bordered hover responsive>
                 <thead>
@@ -132,7 +150,7 @@ const Report = () => {
                 </thead>
 
                 <tbody>
-                    {filteredExpenses.map((item) => (
+                    {filteredExpenses?.map((item) => (
                         <tr key={item.id}>
                             <td>{new Date(item.createdAt).toLocaleDateString()}</td>
                             <td>{item.description}</td>
@@ -154,7 +172,7 @@ const Report = () => {
                 <tfoot>
                     <tr>
                         <td colSpan={3}><strong>Total</strong></td>
-                        <td>₹-</td>
+                        <td>₹0</td>
                         <td>₹{totalExpense}</td>
                     </tr>
 
@@ -164,12 +182,27 @@ const Report = () => {
                     </tr>
                 </tfoot>
             </Table>
-        <Button
-            // disabled={!isPremium}
-            onClick={downloadReport}
-        >
-            Download Report
-        </Button>
+        <div id='pagination-btns'>
+
+            {pagination.hasPreviousPage && (<Button> {"<<"} </Button>)}
+            {pagination.hasPreviousPage && (
+                <Button onClick={()=> getPaginatedExpenses(pagination.previousPage)}>
+                    {pagination.previousPage}
+                </Button>
+            )}
+            <Button id='currBtn' >{pagination.currentPage}</Button>
+            {pagination.hasNextPage && (
+                <Button  onClick={()=> getPaginatedExpenses(pagination.nextPage)}>
+                    {pagination.nextPage}
+                </Button>
+            )}
+            {pagination.hasNextPage && (
+                <Button>
+                    {">>"}
+                </Button>
+            )}
+        
+        </div>
     </>
   )
 }
