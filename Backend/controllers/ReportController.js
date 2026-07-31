@@ -1,12 +1,13 @@
 const Expense = require("../models/Expenses");
 
 const Report = async(req, res) =>{
-    console.log("Report Controller")
+    // console.log("Report Controller")
     try {
-        const page = parseInt(req.params.page) || 1;
-        console.log(page);
+        const page = parseInt(req.query.page) || 1;
+        // console.log(page);
+        const rows = parseInt(req.query.limit) || 10;
 
-        const limit = 10;
+        const limit = rows;
         const offset = (page-1) * limit;
         
         const{ count, rows: paginatedExpenses } = await Expense.findAndCountAll({
@@ -15,7 +16,11 @@ const Report = async(req, res) =>{
             },
             limit,
             offset,
+            order:[["createdAt", "DESC"]]
         });
+
+        // console.log("Total count:", count);
+        // console.log("Rows returned:", paginatedExpenses.length);
 
         return res.status(200).json({
             paginatedExpenses,

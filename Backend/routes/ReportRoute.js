@@ -3,6 +3,6 @@ const router = express.Router();
 const ReportController = require('../controllers/ReportController');
 const Authenticate = require('../middlewares/Authentication');
 
-router.get("/:page", Authenticate, ReportController);
+router.get("/", Authenticate, ReportController);
 
 module.exports = router;
