@@ -11,6 +11,7 @@ const HomePage = () => {
     const amountRef = useRef();
     const descRef = useRef("");
     const catRef = useRef("");
+    const noteRef = useRef("");
 
     const submitHandler= async (e) =>{
         try{
@@ -18,6 +19,7 @@ const HomePage = () => {
             const amount = amountRef.current.value;
             const description = descRef.current.value;
             const category = catRef.current.value;
+            const note = noteRef.current.value || "";
             // console.log(amount, description, category);
             
             const token = localStorage.getItem("token");
@@ -32,6 +34,7 @@ const HomePage = () => {
                     amount, 
                     description,
                     category,
+                    note,
                 })
             });
 
@@ -153,6 +156,10 @@ const HomePage = () => {
                         }
                     </FormSelect>
                 </FormGroup>
+                <FormGroup>
+                    <FormLabel htmlFor='note' >Note:</FormLabel>
+                    <FormControl type='text' name='note' ref={noteRef}/>
+                </FormGroup>
                 <Button type='submit'>Add</Button>
             </Form>
         </div>
@@ -160,7 +167,7 @@ const HomePage = () => {
         <div className='expense-container'>
             {
                 expense.map((item)=>(
-                    <li key={item.id}>amount:{item.amount}, desc:{item.description}, category:{item.category} <button onClick={()=>deleteExp(item.id)} >delete</button></li>
+                    <li key={item.id}>amount:{item.amount}, desc:{item.description}, category:{item.category}, note:{item.note} <button onClick={()=>deleteExp(item.id)} >delete</button></li>
                 ))
             }
         </div>

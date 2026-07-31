@@ -8,7 +8,7 @@ const addExpense = async (req, res) =>{
 
     try {
 
-        let { amount, description, category } = req.body;
+        let { amount, description, category, note } = req.body;
         
         // console.log("req user id POST REQ", req.user.id);
 
@@ -22,7 +22,8 @@ const addExpense = async (req, res) =>{
             amount, 
             description,
             category,
-            UserId:req.user.id
+            UserId:req.user.id,
+            note,
         }, {transaction: transaction});
 
         const user = await Users.findByPk(req.user.id);
