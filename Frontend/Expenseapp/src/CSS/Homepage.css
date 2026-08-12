@@ -1,0 +1,39 @@
+#main-container {
+    margin: 20px;
+}
+
+.form-container {
+    flex: 1;
+}
+
+.delete-btn{
+    background:transparent;
+    border: none;
+}
+
+.expense-container {
+    background-color: #2b2b2b;
+    color: white;
+}
+
+.expense-container thead {
+    background-color: #1f1f1f;
+}
+
+.expense-container th,
+.expense-container td {
+    background-color: #2b2b2b;
+    color: white;
+    border-color: #444;
+}
+
+
+.floating-logout-btn{
+    /* display: flex; */
+    position: fixed;
+    background-color: rgb(174, 48, 48);
+    border: none;
+    right: 20px;
+    bottom: 20px;
+    z-index: 999;
+}

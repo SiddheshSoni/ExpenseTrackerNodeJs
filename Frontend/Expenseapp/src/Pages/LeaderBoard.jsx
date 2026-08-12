@@ -30,7 +30,7 @@ const Leaderboard = ({refresh}) => {
     <>
       <div className='lb-title'>Leaderboard</div>
       <div className='lb-content'>
-        <Table>
+        <Table className='leaderboard-tb' striped variant='dark'>
           <thead>
             <tr>
               <th>Username:</th>

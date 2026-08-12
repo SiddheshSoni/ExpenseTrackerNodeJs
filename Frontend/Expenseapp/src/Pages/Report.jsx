@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react'
 import { Button, Table } from 'react-bootstrap';
 import "../CSS/report.css";
+import { getPaginatedExpense } from '../API/Expenses';
 
 const Report = () => {
     const [expense, setExpense] = useState([]);
-    const [view, setView] = useState("daily");
+    const [view, setView] = useState("monthly");
     const [page, setPage] = useState(1);
     const [pagination, setPagination] = useState({});
     const [rows, setRows] = useState(localStorage.getItem("rows") || 10);
@@ -49,35 +50,19 @@ const Report = () => {
     };
 
     useEffect(()=>{
-        getPaginatedExpenses(page);
+        getPaginatedExp();
     }, [page, rows]);
     
-    const getPaginatedExpenses = async(page)=>{
-        
-        try{
-            const token = localStorage.getItem("token");
+    const getPaginatedExp = async() =>{
+        try {
+            const res = await getPaginatedExpense({page, rows});
 
-            const res = await fetch(`http://localhost:3000/report?page=${page}&limit=${rows}`, {
-                method:"GET",
-                headers:{
-                    'Content-Type':"application/json",
-                    'Authorization':token
-                },
-            });
-            
-            if(!res.ok){
-                throw new Error("Failed fetching data!");
-            }
-
-            const data = await res.json();   
-            setExpense(data.paginatedExpenses);
-
-            setPagination(data);
-
-        }catch(error){
-            console.log(error.message);
+            setExpense(res.paginatedExpenses);
+            setPagination(res);
+        } catch (error) {
+             console.log(error.message);
         }
-    };
+    }
 
     const filteredExpenses = expense?.filter(item => {
         const expenseDate = new Date(item.createdAt);
@@ -96,19 +81,16 @@ const Report = () => {
 
         return true;
     });
-    console.log("expense:", expense.length);
-console.log("filtered:", filteredExpenses.length);
+    
     const totalExpense = filteredExpenses?.reduce(
         (sum, item) => sum + Number(item.amount),
         0
     );
 
     const rowHandler = (e) => {
-        console.log(e.target.value);
         localStorage.setItem("rows", e.target.value);
         setRows(e.target.value);
     };
-    console.log(expense)
   return (
     <>  
         <div className='d-flex justify-content-center align-content-center'>
@@ -117,21 +99,21 @@ console.log("filtered:", filteredExpenses.length);
         <div className='d-flex justify-content-between m-2'>            
             <div className="d-flex gap-2 mb-3">
                 <Button
-                    variant={view === "daily" ? "primary" : "outline-primary"}
+                    variant={view === "daily" ? "info" : "outline-info"}
                     onClick={() => setView("daily")}
                 >
                     Daily
                 </Button>
 
                 <Button
-                    variant={view === "weekly" ? "primary" : "outline-primary"}
+                    variant={view === "weekly" ? "info" : "outline-info"}
                     onClick={() => setView("weekly")}
                 >
                     Weekly
                 </Button>
 
                 <Button
-                    variant={view === "monthly" ? "primary" : "outline-primary"}
+                    variant={view === "monthly" ? "info" : "outline-info"}
                     onClick={() => setView("monthly")}
                 >
                     Monthly
@@ -141,6 +123,7 @@ console.log("filtered:", filteredExpenses.length);
                 <Button 
                     id='download-btn'
                     onClick={downloadReport}
+                    variant='info'
                 >
                     Download Report
                 </Button>
@@ -148,14 +131,14 @@ console.log("filtered:", filteredExpenses.length);
         </div>
         <div className='d-flex'> 
             <label htmlFor='rows'>Select No. of Rows</label>
-            <select onChange={rowHandler}  name='rows'>
+            <select onChange={rowHandler} value={rows} name='rows'>
                 <option value="5" >5</option>
                 <option value="10" >10</option>
                 <option value="25" >25</option>
                 <option value="50" >50</option>
             </select>
         </div>
-            <Table bordered hover responsive>
+            <Table className='leaderboard-tb'>
                 <thead>
                     <tr>
                         <th>Date</th>
@@ -179,7 +162,7 @@ console.log("filtered:", filteredExpenses.length);
                                     : "-"} */}
                             </td>
 
-                            <td className="text-danger">
+                            <td className="">
                                 {item.amount}                                  
                             </td>
                         </tr>
@@ -201,20 +184,20 @@ console.log("filtered:", filteredExpenses.length);
             </Table>
         <div id='pagination-btns'>
 
-            {pagination.hasPreviousPage && (<Button> {"<<"} </Button>)}
+            {pagination.hasPreviousPage && (<Button variant='info' onClick={()=> setPage(0)} > {"<<"} </Button>)}
             {pagination.hasPreviousPage && (
-                <Button onClick={()=> setPage(pagination.previousPage)}>
+                <Button variant='info' onClick={()=> setPage(pagination.previousPage)}>
                     {pagination.previousPage}
                 </Button>
             )}
-            <Button id='currBtn' >{pagination.currentPage}</Button>
+            <Button variant='info' id='currBtn' >{pagination.currentPage}</Button>
             {pagination.hasNextPage && (
-                <Button  onClick={()=> setPage(pagination.nextPage)}>
+                <Button variant='info' onClick={()=> setPage(pagination.nextPage)}>
                     {pagination.nextPage}
                 </Button>
             )}
             {pagination.hasNextPage && (
-                <Button>
+                <Button variant='info' onClick={()=> setPage(pagination.totalPages)} >
                     {">>"}
                 </Button>
             )}
